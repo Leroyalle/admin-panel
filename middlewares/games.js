@@ -1,4 +1,5 @@
 const { readData } = require('../utils/data');
+const { writeData } = require('../utils/data');
 const getAllGames = async (req, res, next) => {
   const games = await readData('./data/games.json');
   if (!games) {
@@ -44,4 +45,27 @@ const updateGamesArray = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllGames, checkIsTitleArray, updateGamesArray };
+const updateGamesFile = async (req, res, next) => {
+  await writeData('./data/games.json', req.games);
+  next();
+};
+
+const deleteGame = async (req, res, next) => {
+  const index = req.games.findIndex((item) => item.id === req.game.id);
+  req.games.splice(index, 1);
+  next();
+};
+const findGameById = async (req, res, next) => {
+  const id = Number(req.params.id);
+  req.game = req.games.find((item) => item.id === id);
+  next();
+};
+
+module.exports = {
+  getAllGames,
+  checkIsTitleArray,
+  updateGamesArray,
+  updateGamesFile,
+  deleteGame,
+  findGameById,
+};
